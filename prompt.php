@@ -413,7 +413,21 @@ if ($approveform && ($adata = $approveform->get_data())) {
     $includeaboutlearning = !empty($adata->includeaboutlearning);
 
     // Update course format based on module type.
-    $courseformat = ($moduletype === 'theme') ? 'topics' : 'weeks';
+    // Handle flexible sections format with graceful fallback.
+    $courseformat = 'weeks'; // default
+    if ($moduletype === 'theme') {
+        $courseformat = 'topics';
+    } elseif ($moduletype === 'flexible') {
+        // Check if flexsections format is available
+        $availableformats = core_plugin_manager::instance()->get_plugins_of_type('format');
+        if (isset($availableformats['flexsections'])) {
+            $courseformat = 'flexsections';
+        } else {
+            // Fallback to weekly if flexsections is not available
+            $courseformat = 'weeks';
+        }
+    }
+    
     $update = new stdClass();
     $update->id = $courseid;
     $update->format = $courseformat;

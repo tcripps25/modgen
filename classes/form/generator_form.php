@@ -48,6 +48,13 @@ class aiplacement_modgen_generator_form extends moodleform {
             'weekly' => get_string('moduletype_weekly', 'aiplacement_modgen'),
             'theme' => get_string('moduletype_theme', 'aiplacement_modgen'),
         ];
+        
+        // Add flexible sections option if the flexsections format plugin is available
+        $availableformats = core_plugin_manager::instance()->get_plugins_of_type('format');
+        if (isset($availableformats['flexsections'])) {
+            $moduletypeoptions['flexible'] = get_string('moduletype_flexible', 'aiplacement_modgen');
+        }
+        
         // (supporting files field moved further down, above the main prompt)
         $mform->addElement('select', 'moduletype', get_string('moduletype', 'aiplacement_modgen'), $moduletypeoptions);
         $mform->setType('moduletype', PARAM_ALPHA);
